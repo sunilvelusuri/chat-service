@@ -1,8 +1,12 @@
 package com.iconnect.chat_service.client;
 
 import com.iconnect.chat_service.controller.dto.ChatMessageResponse;
+import com.iconnect.chat_service.controller.dto.LoginRequest;
+import com.iconnect.chat_service.controller.dto.MatrixLoginRequest;
+import com.iconnect.chat_service.controller.dto.MatrixLoginResponse;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -210,5 +214,34 @@ public class MatrixClient {
     }
 
 
+    public MatrixLoginResponse login(LoginRequest request) {
+        final String username = request.getUsername();
+        final String password = request.getPassword();
+        System.out.println(username);
+        System.out.println(password);
+        MatrixLoginRequest loginRequest = new MatrixLoginRequest();
+        MatrixLoginRequest.Identifier identifier = new MatrixLoginRequest.Identifier();
+        identifier.setUser(username);
+        loginRequest.setIdentifier(identifier);
+        loginRequest.setPassword(password);
 
+        // System.out.println(objectMapper.writeValueAsString(loginRequest));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<MatrixLoginRequest> entity = new HttpEntity<MatrixLoginRequest>(loginRequest, headers);
+        try {
+            // Use WebClient instead of RestTemplate
+            return clientWebClient.post()
+                    .uri("/_matrix/client/v3/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(loginRequest)
+                    .retrieve()
+                    .bodyToMono(MatrixLoginResponse.class)
+                    .block();
+        } catch (WebClientResponseException e) {
+            throw new RuntimeException("Matrix login failed: " + e.getResponseBodyAsString(), e);
+        }
+    }
 }

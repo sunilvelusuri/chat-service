@@ -1,6 +1,8 @@
 package com.iconnect.chat_service.controller;
 
 
+import com.iconnect.chat_service.controller.dto.LoginRequest;
+import com.iconnect.chat_service.controller.dto.MatrixLoginResponse;
 import com.iconnect.chat_service.controller.dto.UserRegisterRequest;
 import com.iconnect.chat_service.entity.UserMapping;
 import com.iconnect.chat_service.service.UserService;
@@ -33,6 +35,10 @@ public class UserController {
 
         System.out.println("called");
         return ResponseEntity.ok(result);
+    }
+    @PostMapping("/login")
+    public MatrixLoginResponse login(@RequestBody LoginRequest request) {
+        return userService.login(request);
     }
 
 }
