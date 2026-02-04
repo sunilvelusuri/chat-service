@@ -2,6 +2,8 @@ package com.iconnect.chat_service.service;
 
 
 import com.iconnect.chat_service.client.MatrixClient;
+import com.iconnect.chat_service.controller.dto.LoginRequest;
+import com.iconnect.chat_service.controller.dto.MatrixLoginResponse;
 import com.iconnect.chat_service.entity.UserMapping;
 import com.iconnect.chat_service.repository.UserMappingRepository;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,10 @@ public class UserService {
                     mapping.setMatrixUserId(matrixId);
                     return repo.save(mapping);
                 });
+    }
+
+    public MatrixLoginResponse login(LoginRequest request) {
+        return matrixClient.login(request);
     }
 }
 
